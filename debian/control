@@ -3,20 +3,17 @@ Section: x11
 Priority: extra
 Maintainer: Debian LXDE Packaging Team <pkg-lxde-maintainers@lists.alioth.debian.org>
 Uploaders: Andrew Lee (李健秋) <ajqlee@debian.org>, Nikolas Poniros <edhunter@sidux.com>
-Build-Depends: debhelper (>= 7.0.50~), 
-               autotools-dev,
-               libgtk2.0-dev (>= 2.6),
-               libglib2.0-dev (>= 2.6),
-               intltool
-Standards-Version: 3.9.1.0
+Build-Depends:
+ debhelper (>= 8), autotools-dev, intltool, libglib2.0-dev (>= 2.6),
+ libgtk2.0-dev (>= 2.6)
+Standards-Version: 3.9.2
 Homepage: http://lxde.org
-Vcs-Git: git://git.debian.org/git/collab-maint/lxtask.git
-Vcs-Browser: http://git.debian.org/?p=collab-maint/lxtask.git;a=summary
+Vcs-Git: git://git.debian.org/git/pkg-lxde/lxtask.git
+Vcs-Browser: http://git.debian.org/?p=pkg-lxde/lxtask.git
 
 Package: lxtask
 Architecture: any
-Depends: ${shlibs:Depends}, 
-         ${misc:Depends}
+Depends: ${misc:Depends}, ${shlibs:Depends}
 Description: process manager for Lightweight X11 Desktop Environment
  A GUI application for monitoring and controlling running processes.
 
