@@ -1,0 +1,78 @@
+This package was debianized by Andrew Lee <andrew@linux.org.tw> on
+Fri, 09 May 2008 04:05:07 +0800.
+
+It was downloaded from http://sourceforge.net/projects/lxde/
+
+Upstream Author: 
+
+    Hong Jen Yee (PCMan)  <pcman.tw@gmail.com>
+
+Copyright: 
+
+    Copyright © 2006 Johannes Zellner <webmaster@nebulon.de>
+    Copyright © 翼varo Lopes <alvieboy@alvie.com>
+    Copyright © 2008 Hong Jen Yee (PCMan)  <pcman.tw@gmail.com>
+
+License:
+
+    This package is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
+ 
+    This package is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+ 
+    You should have received a copy of the GNU General Public License
+    along with this package; if not, write to the Free Software
+    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
+
+
+Files:  src/callbacks.c
+	src/callbacks.h
+	src/functions.h
+	src/interface.h
+	src/main.c
+	src/types.h
+	src/xfce-taskmanager-linux.c
+	src/xfce-taskmanager-linux.h
+
+	Copyright © 2006 Johannes Zellner <webmaster@nebulon.de>
+
+License: GPL v2
+
+Files:  src/functions.c
+    
+	Copyright © 2006 Johannes Zellner <webmaster@nebulon.de>
+	Copyright © 2008 Hong Jen Yee (PCMan)  <pcman.tw@gmail.com>
+	Copyright © 2008 LXDE Team
+	
+License: GPL v2
+
+Files:  src/interface.c
+
+	Copyright © 2006 Johannes Zellner <webmaster@nebulon.de>
+	Copyright © 2008 Hong Jen Yee (PCMan)  <pcman.tw@gmail.com>
+
+License: GPL v2
+
+Files:  src/utils.c
+        src/utils.h
+
+	Copyright © 2008 Hong Jen Yee (PCMan)  <pcman.tw@gmail.com>
+
+License: GPL v2
+
+Files:  po/*
+
+	Copyright © 2008 LXDE Team
+
+License: GPL v2
+
+On Debian systems, the complete text of the GNU General
+Public License version 2 can be found in `/usr/share/common-licenses/GPL-2'.
+
+The Debian packaging is © 2008, Andrew Lee <andrew@linux.org.tw> and
+is licensed under the GPL, see `/usr/share/common-licenses/GPL'.
