@@ -26,6 +26,10 @@
 #include <signal.h>
 #include <unistd.h>
 
+#ifdef ENABLE_NLS
+#include <libintl.h>
+#endif
+
 #include "types.h"
 #include "interface.h"
 #include "functions.h"
@@ -46,6 +50,7 @@ gboolean show_cached_as_free; /* Show memory used Cache as free memory */
 
 gboolean full_view;
 
+
 guint win_width;
 guint win_height;
 guint refresh_interval;
@@ -62,7 +67,9 @@ int main (int argc, char *argv[])
     textdomain (GETTEXT_PACKAGE);
 #endif
 
+#if !GTK_CHECK_VERSION(3,0,0)
     gtk_set_locale ();
+#endif
     gtk_init (&argc, &argv);
 
     PAGE_SIZE=sysconf(_SC_PAGESIZE)>>10;

@@ -26,6 +26,7 @@
 #include <fcntl.h>
 
 #include <glib/gi18n.h>
+#include <glib/gprintf.h>
 #include "xfce-taskmanager-linux.h"
 
 
@@ -64,8 +65,25 @@ void get_task_details(gint pid,struct task *task)
 		
 		read(fd,buf,2048);
 		p=strchr(buf,'(');p++;
-                for(len=0;*p!=')';len++) task->name[len]=*p++;
-                task->name[len]=0;p++;
+		for(len=0;*p!=')';len++) task->name[len]=*p++;
+		task->name[len]=0;p++;
+		if(len>=15)
+		{
+			FILE *fp;
+			sprintf(line,"/proc/%d/cmdline",pid);
+			fp=fopen(line,"r");
+			if(fp)
+			{
+				char *p;
+				fscanf(fp, "%255s", line);
+				fclose(fp);
+				p=strrchr(line,'/');
+				if(p != NULL)
+					strcpy(task->name, p+1);
+				else
+					strcpy(task->name, line);
+			}
+		}
 
 		sscanf(p, "%1s %i %s %s %s %s %s %s %s %s %s %i %i %s %s %s %i",
                         task->state, // processstate
@@ -285,6 +303,7 @@ GArray *get_task_list(void)
     {
         int pid=atoi(namelist[n]->d_name);
         struct task *task=&g_array_index(task_list, struct task, count);
+	free(namelist[n]);
         get_task_details(pid,task);
         if(task->pid != -1 && task->size>0)	// don't show error or kenerl threads
         {
@@ -351,7 +370,9 @@ gboolean get_system_status (system_status *sys_stat)
             sys_stat->mem_free=atoi(buffer+9),reach++;
         else if(!strncmp(buffer,"Cached:",7))
             sys_stat->mem_cached=atoi(buffer+8),reach++;
-        if(reach==3) break;
+        else if(!strncmp(buffer,"Buffers:",8))
+            sys_stat->mem_buffered=atoi(buffer+9),reach++;
+        if(reach==4) break;
     }
     fclose (file);
 

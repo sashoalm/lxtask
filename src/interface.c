@@ -41,22 +41,20 @@ GtkWidget *refresh_spin;
 GtkWidget* create_main_window (void)
 {
     GtkWidget *window;
-    GtkWidget *menubar, *menu, *item, *sub;
+    GtkWidget *menubar, *menu, *item;// *sub;
     GtkWidget *vbox1;
     GtkWidget *bbox1;
     GtkWidget *scrolledwindow1;
     GtkWidget *button1;
-    GtkWidget *button2;
+ //   GtkWidget *button2;
     GtkWidget *button3;
 
     GtkWidget *system_info_box;
 
-    tooltips = gtk_tooltips_new();
-    gtk_tooltips_enable(tooltips);
-
     window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
     gtk_window_set_title (GTK_WINDOW (window), _("Task Manager"));
     gtk_window_set_default_size (GTK_WINDOW (window), win_width, win_height);
+    gtk_window_set_icon_name (GTK_WINDOW (window),"utilities-system-monitor");
 
     bbox1 = gtk_vbox_new (FALSE, 10);
     gtk_widget_show (bbox1);
@@ -106,6 +104,9 @@ GtkWidget* create_main_window (void)
 
     cpu_usage_progress_bar_box = gtk_event_box_new ();
     cpu_usage_progress_bar = gtk_progress_bar_new ();
+#if GTK_CHECK_VERSION(3,0,0)
+    gtk_progress_bar_set_show_text (GTK_PROGRESS_BAR (cpu_usage_progress_bar), TRUE);
+#endif
     gtk_progress_bar_set_text (GTK_PROGRESS_BAR (cpu_usage_progress_bar), _("cpu usage"));
     gtk_widget_show (cpu_usage_progress_bar);
     gtk_widget_show (cpu_usage_progress_bar_box);
@@ -114,6 +115,9 @@ GtkWidget* create_main_window (void)
 
     mem_usage_progress_bar_box = gtk_event_box_new ();
     mem_usage_progress_bar = gtk_progress_bar_new ();
+#if GTK_CHECK_VERSION(3,0,0)
+    gtk_progress_bar_set_show_text (GTK_PROGRESS_BAR (mem_usage_progress_bar), TRUE);
+#endif
     gtk_progress_bar_set_text (GTK_PROGRESS_BAR (mem_usage_progress_bar), _("memory usage"));
     gtk_widget_show (mem_usage_progress_bar);
     gtk_widget_show (mem_usage_progress_bar_box);
@@ -299,8 +303,8 @@ GtkWidget *create_prio_submenu(void)
 GtkWidget* create_mainmenu (void)
 {
     GtkWidget *mainmenu;
-    GtkWidget *info1;
-    GtkWidget *trennlinie1;
+//    GtkWidget *info1;
+//    GtkWidget *trennlinie1;
     GtkWidget *preferences1;
     GtkWidget *show_user_tasks1;
     GtkWidget *show_root_tasks1;
@@ -363,24 +367,28 @@ void show_about_dialog(void)
         "  * Johannes Zellner <webmaster@nebulon.de>"),
         NULL
     };
-    /* TRANSLATORS: Replace mw string with your names, one name per line. */
+    /* TRANSLATORS: Replace this string with your names, one name per line. */
     gchar *translators = _( "translator-credits" );
 
-    /* gtk_about_dialog_set_url_hook( open_url, mw, NULL); */
+    /* gtk_about_dialog_set_url_hook( open_url, this, NULL); */
 
     about_dlg = gtk_about_dialog_new ();
 
     gtk_container_set_border_width ( ( GtkContainer*)about_dlg , 2 );
     gtk_about_dialog_set_version ( (GtkAboutDialog*)about_dlg, VERSION );
+#if !GTK_CHECK_VERSION(2,12,0)
     gtk_about_dialog_set_name ( (GtkAboutDialog*)about_dlg, _( "LXTask" ) );
+#else
+	gtk_about_dialog_set_program_name ( (GtkAboutDialog*)about_dlg, _( "LXTask" ) );
+#endif
     /* gtk_about_dialog_set_logo( (GtkAboutDialog*)about_dlg, gdk_pixbuf_new_from_file(  PACKAGE_DATA_DIR"/pixmaps/lxtask.png", NULL ) ); */
     gtk_about_dialog_set_copyright ( (GtkAboutDialog*)about_dlg, _( "Copyright (C) 2008 LXDE team" ) );
     gtk_about_dialog_set_comments ( (GtkAboutDialog*)about_dlg, _( "Lightweight task manager for LXDE project" ) );
-    gtk_about_dialog_set_license ( (GtkAboutDialog*)about_dlg, "LXTask\n\nCopyright (C) 2008 LXDE team\n\nmw program is free software; you can redistribute it and/or\nmodify it under the terms of the GNU General Public License\nas published by the Free Software Foundation; either version 2\nof the License, or (at your option) any later version.\n\nmw program is distributed in the hope that it will be useful,\nbut WITHOUT ANY WARRANTY; without even the implied warranty of\nMERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the\nGNU General Public License for more details.\n\nYou should have received a copy of the GNU General Public License\nalong with mw program; if not, write to the Free Software\nFoundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA." );
+    gtk_about_dialog_set_license ( (GtkAboutDialog*)about_dlg, "LXTask\n\nCopyright (C) 2008 LXDE team\n\nThis program is free software; you can redistribute it and/or\nmodify it under the terms of the GNU General Public License\nas published by the Free Software Foundation; either version 2\nof the License, or (at your option) any later version.\n\nThis program is distributed in the hope that it will be useful,\nbut WITHOUT ANY WARRANTY; without even the implied warranty of\nMERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the\nGNU General Public License for more details.\n\nYou should have received a copy of the GNU General Public License\nalong with this program; if not, write to the Free Software\nFoundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA." );
     gtk_about_dialog_set_website ( (GtkAboutDialog*)about_dlg, "http://lxde.org/" );
     gtk_about_dialog_set_authors ( (GtkAboutDialog*)about_dlg, authors );
     gtk_about_dialog_set_translator_credits ( (GtkAboutDialog*)about_dlg, translators );
-    /*gtk_window_set_transient_for( (GtkWindow*) about_dlg, GTK_WINDOW( mw ) );*/
+    /*gtk_window_set_transient_for( (GtkWindow*) about_dlg, GTK_WINDOW( this ) );*/
 
     gtk_dialog_run( ( GtkDialog*)about_dlg );
     gtk_widget_destroy( about_dlg );
@@ -587,11 +595,11 @@ void show_preferences(void)
     dlg = gtk_dialog_new_with_buttons(_("Preferences"), NULL, 0, GTK_STOCK_CANCEL, GTK_RESPONSE_REJECT, GTK_STOCK_OK, GTK_RESPONSE_ACCEPT, NULL);
     c_area = gtk_dialog_get_content_area(GTK_DIALOG (dlg));
 
-    gtk_box_pack_start_defaults(GTK_BOX (c_area), notebook);
+    gtk_box_pack_start(GTK_BOX (c_area), notebook, TRUE, TRUE, 0);
     gtk_notebook_append_page(GTK_NOTEBOOK (notebook), general_box, gtk_label_new(_("General")));
-    gtk_box_pack_start_defaults(GTK_BOX (refresh_box), gtk_label_new(_("Refresh rate (seconds):")));
-    gtk_box_pack_start_defaults(GTK_BOX (refresh_box), refresh_spin);
-    gtk_box_pack_start_defaults(GTK_BOX (general_box), refresh_box);
+    gtk_box_pack_start(GTK_BOX (refresh_box), gtk_label_new(_("Refresh rate (seconds):")), TRUE, TRUE, 0);
+    gtk_box_pack_start(GTK_BOX (refresh_box), refresh_spin, TRUE, TRUE, 0);
+    gtk_box_pack_start(GTK_BOX (general_box), refresh_box, TRUE, TRUE, 0);
 
     gtk_widget_show_all(notebook);
 
