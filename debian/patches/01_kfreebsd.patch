@@ -1,0 +1,48 @@
+Origin: Cyril Brulebois
+Bug-Debian: http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=585969
+Reviewed-By: Andrew Lee
+Last-Update: 2010-07-31
+
+--- lxtask-0.1.3.orig/src/types.h
++++ lxtask-0.1.3/src/types.h
+@@ -78,6 +78,6 @@ extern guint win_height;
+ const gchar *custom_signal_0;
+ const gchar *custom_signal_1;
+ 
+-extern int PAGE_SIZE;
++extern int page_size;
+ 
+ #endif
+--- lxtask-0.1.3.orig/src/xfce-taskmanager-linux.c
++++ lxtask-0.1.3/src/xfce-taskmanager-linux.c
+@@ -46,8 +46,8 @@ void get_task_details(gint pid,struct ta
+         sscanf(line,"%d %d",&task->size,&task->rss);
+         close(fd);
+         if(!task->size) return;
+-	task->size*=PAGE_SIZE;
+-	task->rss*=PAGE_SIZE;
++	task->size*=page_size;
++	task->rss*=page_size;
+ 
+ 	sprintf(line,"/proc/%d/stat",pid);
+ 	fd=open(line,O_RDONLY);
+--- lxtask-0.1.3.orig/src/main.c
++++ lxtask-0.1.3/src/main.c
+@@ -51,7 +51,7 @@ guint win_height;
+ guint refresh_interval;
+ guint rID;
+ 
+-int PAGE_SIZE;
++int page_size;
+ 
+ int main (int argc, char *argv[])
+ {
+@@ -65,7 +65,7 @@ int main (int argc, char *argv[])
+     gtk_set_locale ();
+     gtk_init (&argc, &argv);
+ 
+-    PAGE_SIZE=sysconf(_SC_PAGESIZE)>>10;
++    page_size=sysconf(_SC_PAGESIZE)>>10;
+     own_uid = getuid();
+ 
+     config_file = g_build_filename(g_get_user_config_dir(), "lxtask.conf", NULL);

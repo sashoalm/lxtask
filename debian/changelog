@@ -1,3 +1,16 @@
+lxtask (0.1.3-2) unstable; urgency=low
+
+  [ Cyril Brulebois ]
+  * Replace PAGE_SIZE with page_size everywhere, since the former might
+    be defined through system-wide headers (e.g. on GNU/kFreeBSD).
+    (Closes:585969)
+
+  [ Andrew Lee (李健秋) ]
+  * Build-depends on debhelper >= 7.0.50~
+  * Bumped Standard-version to 3.9.1
+
+ -- Andrew Lee (李健秋) <ajqlee@debian.org>  Sat, 31 Jul 2010 17:15:40 -0400
+
 lxtask (0.1.3-1) unstable; urgency=low
 
   [ Julien Lavergne ]
