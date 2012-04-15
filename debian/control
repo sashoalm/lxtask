@@ -15,5 +15,6 @@ Vcs-Git: git://git.lxde.org/git/debian/lxtask.git
 Package: lxtask
 Architecture: any
 Depends: ${misc:Depends}, ${shlibs:Depends}
-Description: process manager for Lightweight X11 Desktop Environment
- A GUI application for monitoring and controlling running processes.
+Description: LXDE task manager
+ lxtask is a GUI application for the Lightweight X11 Desktop Environment (LXDE).
+ It allows monitoring and controlling of running processes.
