@@ -1,3 +1,26 @@
+lxtask (0.1.4-2) unstable; urgency=low
+
+  * Updating maintainer field.
+  * Adding myself to uploaders.
+  * Updating vcs fields.
+  * Removing whitespaces at EOL and EOF.
+  * Updating package to debhelper version 9.
+  * Updating package to standards version 3.9.3.
+  * Making build-depends unversioned where already fulfiled as of
+    squeeze.
+  * Updating homepage field.
+  * Rewriting copyright file machine-readable format version 1.0.
+  * Prefixing debhelper files with package name.
+  * Rediffing kfreebsd.patch with common diff options.
+  * Decrufting rules file.
+  * Switching to xz compression for both the source and the binary
+    packages.
+  * Rewriting package descriptions.
+  * Adding upstreams todo file as documentation.
+  * Completing menu file.
+
+ -- Daniel Baumann <daniel@debian.org>  Sun, 15 Apr 2012 09:40:13 +0000
+
 lxtask (0.1.4-1) unstable; urgency=low
 
   * Merging upstream version 0.1.4:
