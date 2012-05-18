@@ -1,3 +1,15 @@
+lxtask (0.1.4-3) unstable; urgency=low
+
+  * Correcting spelling of lxtask in package long description.
+  * Removing superfluous comma in copyright file.
+  * Making use of paragraphs in package long-description.
+  * Correcting spelling of upstream-name field in copyright file.
+  * Correcting spelling of lxtask in menu file.
+  * Moving package to priority optional.
+  * Adding debug package.
+
+ -- Daniel Baumann <daniel@debian.org>  Fri, 18 May 2012 19:26:03 +0200
+
 lxtask (0.1.4-2) unstable; urgency=low
 
   * Updating maintainer field.
