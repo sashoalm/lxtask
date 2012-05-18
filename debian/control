@@ -19,3 +19,13 @@ Description: LXDE task manager
  LXTask is a GUI application for the Lightweight X11 Desktop Environment (LXDE).
  .
  It allows monitoring and controlling of running processes.
+
+Package: lxtask-dbg
+Section: debug
+Priority: extra
+Architecture: any
+Depends: ${misc:Depends}, lxtask
+Description: LXDE task manager (debug)
+ LXTask is a GUI application for the Lightweight X11 Desktop Environment (LXDE).
+ .
+ This package contains the debugging symbols.
