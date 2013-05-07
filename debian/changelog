@@ -1,3 +1,12 @@
+lxtask (0.1.4-3.1) unstable; urgency=low
+
+  * Use nprocs function instead of trying to parse /proc/cpuinfo 
+    (closes: #705506)
+  * Remove Daniel Baumann from uploaders at his own request.
+    (closes: #704350)
+
+ -- Peter Michael Green <plugwash@debian.org>  Tue, 07 May 2013 23:03:27 +0000
+
 lxtask (0.1.4-3) unstable; urgency=low
 
   * Correcting spelling of lxtask in package long description.
