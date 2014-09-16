@@ -1,3 +1,17 @@
+lxtask (0.1.5-1) unstable; urgency=low
+
+  * Enabling parallel build (pass --parallel to dh).
+  * Removing obsolete target override_dh_builddeb from debian/rules file.
+  * Adding myself to Uploaders.
+  * Updating watch file to support XZ tarball format and non-numeric versions.
+  * Updating description which was too short (one line long).
+  * Bump Standards-Version to 3.9.5.
+  * Merging upstream version 0.1.5.
+  * Removing all the patches since they are included by upstream.
+  * Removing override_dh_auto_test target since upstream fixed the problem.
+
+ -- Andriy Grytsenko <andrej@rep.kiev.ua>  Tue, 16 Sep 2014 16:04:12 +0300
+
 lxtask (0.1.4-3.1) unstable; urgency=low
 
   * Use nprocs function instead of trying to parse /proc/cpuinfo 
