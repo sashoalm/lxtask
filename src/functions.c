@@ -31,17 +31,17 @@
 
 #include "functions.h"
 
-extern guint refresh_interval;
+extern gint refresh_interval;
 
 static system_status *sys_stat =NULL;
 
 gboolean refresh_task_list(void)
 {
-    gint i, j;
+    guint i, j;
     GArray *new_task_list;
     gdouble cpu_usage;
     guint num_cpus;
-    guint memory_used;
+    guint64 memory_used;
     char tooltip[256];
 
     if (sys_stat!=NULL)
@@ -70,11 +70,11 @@ gboolean refresh_task_list(void)
 
                 new_tmp->time_percentage = (gfloat)(tmp->time - tmp->old_time) * (gfloat)(1000.0f / (refresh_interval * 1000 * num_cpus));
                 if(
-                    (gint)tmp->ppid != (gint)new_tmp->ppid ||
+                    tmp->ppid != new_tmp->ppid ||
                     tmp->state[0]!=new_tmp->state[0] ||
-                    (unsigned int)tmp->size != (unsigned int)new_tmp->size ||
-                    (unsigned int)tmp->rss != (unsigned int)new_tmp->rss ||
-                    (unsigned int)tmp->time_percentage != (unsigned int)new_tmp->time_percentage ||
+                    tmp->size != new_tmp->size ||
+                    tmp->rss != new_tmp->rss ||
+                    tmp->time_percentage != new_tmp->time_percentage ||
                     tmp->prio != new_tmp->prio
                  )
                 {
@@ -109,7 +109,7 @@ gboolean refresh_task_list(void)
 
         if(!tmp->checked)
         {
-            remove_list_item((gint)tmp->pid);
+            remove_list_item(tmp->pid);
             g_array_remove_index(task_array, i);
             tasks--;
         }
@@ -145,7 +145,9 @@ gboolean refresh_task_list(void)
     {
         memory_used-=sys_stat->mem_cached+sys_stat->mem_buffered;
     }
-    sprintf (tooltip, _("Memory: %d MB of %d MB used"), memory_used / 1024, sys_stat->mem_total / 1024);
+    /* FIXME: this will work only for < 2048 TB but where so many memory... */
+    sprintf (tooltip, _("Memory: %d MB of %d MB used"), (int)(memory_used / 1024),
+             (int)(sys_stat->mem_total / 1024));
     if(strcmp(tooltip,gtk_progress_bar_get_text(GTK_PROGRESS_BAR(mem_usage_progress_bar))))
     {
         gtk_progress_bar_set_fraction (GTK_PROGRESS_BAR (mem_usage_progress_bar),  (gdouble)memory_used / sys_stat->mem_total);
@@ -171,7 +173,7 @@ gdouble get_cpu_usage(system_status *sys_stat)
 
     if ( get_cpu_usage_from_proc( sys_stat ) == FALSE )
     {
-        gint i = 0;
+        guint i = 0;
 
         for(i = 0; i < task_array->len; i++)
         {
@@ -230,6 +232,7 @@ void load_config(void)
     show_user_tasks = key_file_get_bool(rc_file, group, "show_user_tasks", TRUE);
     show_root_tasks = key_file_get_bool(rc_file, group, "show_root_tasks", FALSE);
     show_other_tasks = key_file_get_bool(rc_file, group, "show_other_tasks", FALSE);
+    show_full_path = key_file_get_bool(rc_file, group, "show_full_path", FALSE);
     show_cached_as_free = key_file_get_bool(rc_file, group, "show_cached_as_free", TRUE);
 
     full_view = key_file_get_bool(rc_file, group, "full_view", TRUE);
@@ -241,20 +244,87 @@ void load_config(void)
     g_key_file_free(rc_file);
 }
 
+static int check_config(void)
+{
+	static const char group[]="General";
+	int res=0;
+    GKeyFile *rc_file = g_key_file_new();
+    g_key_file_load_from_file(rc_file, config_file, 0, NULL);
+    
+    if(show_user_tasks!=key_file_get_bool(rc_file, group, "show_user_tasks", TRUE))
+    {
+		res=1;
+		goto out;
+	}
+	if(show_root_tasks!=key_file_get_bool(rc_file, group, "show_root_tasks", FALSE))
+    {
+		res=1;
+		goto out;
+	}
+	if(show_other_tasks!=key_file_get_bool(rc_file, group, "show_other_tasks", FALSE))
+    {
+		res=1;
+		goto out;
+	}
+	if(show_full_path!=key_file_get_bool(rc_file, group, "show_full_path", FALSE))
+	{
+		res=1;
+		goto out;
+	}
+	if(show_cached_as_free!=key_file_get_bool(rc_file, group, "show_cached_as_free", TRUE))
+	{
+		res=1;
+		goto out;
+	}
+	if(full_view!=key_file_get_bool(rc_file, group, "full_view", TRUE))
+	{
+		res=1;
+		goto out;
+	}
+	gtk_window_get_size(GTK_WINDOW (main_window), &win_width, &win_height);
+	if(win_width != key_file_get_int(rc_file, group, "win_width", 500 ))
+	{
+		res=1;
+		goto out;
+	}
+	if(win_height != key_file_get_int(rc_file, group, "win_height", 400 ))
+	{
+		res=1;
+		goto out;
+	}
+	if(refresh_interval != key_file_get_int(rc_file, group, "refresh_interval", 2 ))
+	{
+		res=1;
+		goto out;
+	}
+out:
+    g_key_file_free(rc_file);
+	return res;
+}
+
 void save_config(void)
 {
-    FILE* rc_file = fopen( config_file, "w" );
+    FILE* rc_file ;
+   		
+    if(!check_config())
+    {
+    	return;
+    }
+
+    rc_file = fopen( config_file, "w" );
+    if(!rc_file) return;
 
     fputs( "[General]\n", rc_file );
     fprintf( rc_file, "show_user_tasks=%d\n", show_user_tasks);
     fprintf( rc_file, "show_root_tasks=%d\n", show_root_tasks);
     fprintf( rc_file, "show_other_tasks=%d\n", show_other_tasks);
+    fprintf( rc_file, "show_full_path=%d\n", show_full_path);
 
     fprintf( rc_file, "show_cached_as_free=%d\n", show_cached_as_free);
 
     fprintf( rc_file, "full_view=%d\n", full_view);
 
-    gtk_window_get_size(GTK_WINDOW (main_window), (gint *) &win_width, (gint *) &win_height);
+    gtk_window_get_size(GTK_WINDOW (main_window), &win_width, &win_height);
 
     fprintf( rc_file, "win_width=%d\n", win_width);
     fprintf( rc_file, "win_height=%d\n", win_height);

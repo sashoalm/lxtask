@@ -26,14 +26,14 @@
 
 struct task
 {
-    gint pid;
-    gint ppid;
-    gint uid;
+    pid_t pid;
+    pid_t ppid;
+    uid_t uid;
     gchar uname[64];
-    gchar name[64];
+    gchar name[255];
     gchar state[16];
-    gint size;
-    gint rss;
+    guint64 size;
+    guint64 rss;
     gboolean checked;
     gint time;
     gint old_time;
@@ -43,17 +43,17 @@ struct task
 
 typedef struct
 {
-    guint mem_total;
-    guint mem_free;
-    guint mem_cached;
-    guint mem_buffered;
-    guint cpu_count;
-    guint cpu_idle;
-    guint cpu_user;
-    guint cpu_nice;
-    guint cpu_system;
-    guint cpu_old_jiffies;
-    guint cpu_old_used;
+    guint64 mem_total;
+    guint64 mem_free;
+    guint64 mem_cached;
+    guint64 mem_buffered;
+    guint64 cpu_count;
+    guint64 cpu_idle;
+    guint64 cpu_user;
+    guint64 cpu_nice;
+    guint64 cpu_system;
+    guint64 cpu_old_jiffies;
+    guint64 cpu_old_used;
     gboolean valid_proc_reading;
 } system_status;
 
@@ -61,24 +61,25 @@ extern GtkWidget *main_window;
 
 extern GArray *task_array;
 extern gint tasks;
-extern gint own_uid;
+extern uid_t own_uid;
 
 extern gchar *config_file;
 
 extern gboolean show_user_tasks;
 extern gboolean show_root_tasks;
 extern gboolean show_other_tasks;
+extern gboolean show_full_path;
 
 extern gboolean show_cached_as_free; /* Show memory used Cache as free memory */
 
 extern gboolean full_view;
 
-extern guint win_width;
-extern guint win_height;
+extern gint win_width;
+extern gint win_height;
 
 const gchar *custom_signal_0;
 const gchar *custom_signal_1;
 
-extern int PAGE_SIZE;
+extern int page_size;
 
 #endif

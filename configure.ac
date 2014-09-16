@@ -1,10 +1,11 @@
 AC_PREREQ([2.57])
-AC_INIT(lxtask,[0.1.4], [],lxtask)
-AM_INIT_AUTOMAKE()
-AC_PROG_INTLTOOL(, [no-xml])
-AM_MAINTAINER_MODE
+AC_INIT(lxtask,[0.1.5], [],lxtask)
+AM_INIT_AUTOMAKE([foreign no-dist-gzip dist-xz])
 
-AM_CONFIG_HEADER(config.h)
+AM_MAINTAINER_MODE([enable])
+AC_CONFIG_MACRO_DIR([.])
+
+AC_CONFIG_HEADERS([config.h])
 
 AC_PROG_CC
 AC_PROG_INSTALL
@@ -37,20 +38,54 @@ PKG_CHECK_MODULES(GTK, [$pkg_modules])
 AC_SUBST(GTK_CFLAGS)
 AC_SUBST(GTK_LIBS)
 
+# Init intltool
+IT_PROG_INTLTOOL
+
 GETTEXT_PACKAGE=lxtask
-#AM_GNU_GETTEXT([external])
-AM_GNU_GETTEXT_VERSION(0.14.1)
 AC_SUBST(GETTEXT_PACKAGE)
 AC_DEFINE_UNQUOTED(GETTEXT_PACKAGE,"$GETTEXT_PACKAGE", [Gettext package.])
 
-#These codes are NOT maintained by Pootle ca el en_GB lv sq
-ALL_LINGUAS="af ar ca cs da de el en_GB es et eu fa fi fr gl hr hu id it ja ko lt lv ml nb nl nn pl ps pt pt_BR ru sk sl sq sv tr uk ur ur_PK vi zh_CN zh_TW"
+# Generate po/LINGUAS on the fly rather than relying on translators
+# to maintain it manually. This also overcome the problem that Transifex
+# cannot add a language to po/LINGUAS if a new po file is submitted.
+rm -f $srcdir/po/LINGUAS
+for po_file in `ls $srcdir/po/*.po | sort`;
+do
+    lang=`echo "$po_file" | sed "s|.*/po/\(.*\)\.po|\1|g"`
+    echo $lang >> $srcdir/po/LINGUAS
+done
+
 AM_GLIB_GNU_GETTEXT
+
+AC_ARG_ENABLE(debug,
+    [AC_HELP_STRING([--enable-debug],
+        [build lxtask with debug support @<:@default=no@:>@])],
+    [enable_debug="${enableval}"],
+    [enable_debug=no]
+)
+
+if test "$enable_debug" = "yes"; then
+    # turn on debug and disable optimization
+    CPPFLAGS="$CPPFLAGS -DG_ENABLE_DEBUG -O0 -g"
+    case "$CC" in
+    gcc*)
+        CPPFLAGS="$CPPFLAGS -Wall -Wextra -Wno-unused-parameter -Wno-missing-field-initializers"
+        ;;
+    *)
+        ;;
+    esac
+    dnl Be more strict on portability
+    CPPFLAGS="$CPPFLAGS -D_POSIX_C_SOURCE=200112L -D_XOPEN_SOURCE=700"
+else
+    # turn off glib debug checks
+    CPPFLAGS="$CPPFLAGS -DG_DISABLE_ASSERT -DG_DISABLE_CHECKS -DG_DISABLE_CAST_CHECKS"
+fi
 
 AC_OUTPUT([
   Makefile
   src/Makefile
   po/Makefile.in
+  data/lxtask.1
 ])
 
 echo

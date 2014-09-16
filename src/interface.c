@@ -34,7 +34,7 @@
   g_object_set_data (G_OBJECT (component), name, widget)
 
 void show_preferences(void);
-extern guint refresh_interval;
+extern gint refresh_interval;
 extern guint rID;
 GtkWidget *refresh_spin;
 
@@ -66,11 +66,25 @@ GtkWidget* create_main_window (void)
 
 	/* build menu */
 	menu = gtk_menu_new();
+	
 	item = gtk_menu_item_new_with_mnemonic( _("_File") );
 	gtk_menu_item_set_submenu(GTK_MENU_ITEM (item), menu );
 	gtk_menu_shell_append( (GtkMenuShell*)menubar, item );
 
 	item = gtk_image_menu_item_new_from_stock( GTK_STOCK_QUIT, NULL );
+	GtkAccelGroup* accel_group = gtk_accel_group_new();
+	gtk_window_add_accel_group(GTK_WINDOW(window), accel_group);
+#if GTK_CHECK_VERSION(3,0,0)
+	gtk_widget_add_accelerator(item, "activate", accel_group, 
+		GDK_KEY_Escape, (GdkModifierType)0, GTK_ACCEL_VISIBLE);
+	gtk_widget_add_accelerator(item, "activate", accel_group, 
+		GDK_KEY_W, GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
+#else
+	gtk_widget_add_accelerator(item, "activate", accel_group, 
+		GDK_Escape, (GdkModifierType)NULL, GTK_ACCEL_VISIBLE);
+	gtk_widget_add_accelerator(item, "activate", accel_group, 
+		GDK_W, GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
+#endif
 	gtk_menu_shell_append( (GtkMenuShell*)menu, item );
 	g_signal_connect( item, "activate", G_CALLBACK(gtk_main_quit), NULL );
 
@@ -181,7 +195,7 @@ void create_list_store(void)
     column = gtk_tree_view_column_new_with_attributes(_("User"), cell_renderer, "text", COLUMN_UNAME, NULL);
     gtk_tree_view_column_set_resizable(column, TRUE);
     gtk_tree_view_column_set_sort_column_id(column, COLUMN_UNAME);
-    gtk_tree_sortable_set_sort_func(GTK_TREE_SORTABLE(list_store), COLUMN_UNAME, compare_int_list_item, (void *)COLUMN_UNAME, NULL);
+    gtk_tree_sortable_set_sort_func(GTK_TREE_SORTABLE(list_store), COLUMN_UNAME, compare_string_list_item, (void *)COLUMN_UNAME, NULL);
     gtk_tree_view_append_column(GTK_TREE_VIEW(treeview), column);
 
     cell_renderer = gtk_cell_renderer_text_new();
@@ -310,6 +324,7 @@ GtkWidget* create_mainmenu (void)
     GtkWidget *show_root_tasks1;
     GtkWidget *show_other_tasks1;
     GtkWidget *show_cached_as_free1;
+    GtkWidget *show_full_path1;
     GtkWidget *separator1;
     GtkAccelGroup *accel_group;
 
@@ -332,6 +347,11 @@ GtkWidget* create_mainmenu (void)
     gtk_widget_show (show_other_tasks1);
     gtk_menu_shell_append(GTK_MENU_SHELL(mainmenu), show_other_tasks1);
 
+    show_full_path1 = gtk_check_menu_item_new_with_mnemonic (_("Show full cmdline"));
+    gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM(show_full_path1), show_full_path);
+    gtk_widget_show (show_full_path1);
+    gtk_menu_shell_append(GTK_MENU_SHELL(mainmenu), show_full_path1);
+
     show_cached_as_free1 = gtk_check_menu_item_new_with_mnemonic (_("Show memory used by cache as free"));
     gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM(show_cached_as_free1), show_cached_as_free);
     gtk_widget_show (show_cached_as_free1);
@@ -346,9 +366,10 @@ GtkWidget* create_mainmenu (void)
     gtk_widget_show(preferences1);
     gtk_menu_shell_append(GTK_MENU_SHELL(mainmenu), preferences1);
 
-    g_signal_connect ((gpointer) show_user_tasks1, "toggled", G_CALLBACK (on_show_tasks_toggled), (void *)own_uid);
+    g_signal_connect ((gpointer) show_user_tasks1, "toggled", G_CALLBACK (on_show_tasks_toggled), (void *)(gsize)own_uid);
     g_signal_connect ((gpointer) show_root_tasks1, "toggled", G_CALLBACK (on_show_tasks_toggled), (void *)0);
     g_signal_connect ((gpointer) show_other_tasks1, "toggled", G_CALLBACK (on_show_tasks_toggled), (void *)-1);
+    g_signal_connect ((gpointer) show_full_path1, "toggled", G_CALLBACK (on_show_tasks_toggled), (void *)-2);
     g_signal_connect ((gpointer) show_cached_as_free1, "toggled", G_CALLBACK (on_show_cached_as_free_toggled), (void *)0);
 
     gtk_menu_set_accel_group (GTK_MENU (mainmenu), accel_group);
@@ -408,7 +429,7 @@ void change_list_store_view(void)
         gtk_tree_view_column_set_visible (gtk_tree_view_get_column(GTK_TREE_VIEW(treeview), COLUMN_UNAME), TRUE);
 }
 
-void fill_list_item(gint i, GtkTreeIter *iter)
+void fill_list_item(guint i, GtkTreeIter *iter)
 {
     if(iter != NULL)
     {
@@ -416,17 +437,17 @@ void fill_list_item(gint i, GtkTreeIter *iter)
         struct task *task = &g_array_index(task_array, struct task, i);
 
         gtk_tree_store_set(GTK_TREE_STORE(list_store), iter, COLUMN_NAME, task->name, -1);
-        sprintf(buf,"%d",task->pid);
+        sprintf(buf,"%u",(guint)task->pid);
         gtk_tree_store_set(GTK_TREE_STORE(list_store), iter, COLUMN_PID, buf, -1);
-        sprintf(buf,"%d",task->ppid);
+        sprintf(buf,"%u",(guint)task->ppid);
         gtk_tree_store_set(GTK_TREE_STORE(list_store), iter, COLUMN_PPID, buf, -1);
         gtk_tree_store_set(GTK_TREE_STORE(list_store), iter, COLUMN_STATE, task->state, -1);
 
         /* size */
-        gtk_tree_store_set(GTK_TREE_STORE(list_store), iter, COLUMN_MEM, size_to_string(buf, task->size * 1024), -1);
+        gtk_tree_store_set(GTK_TREE_STORE(list_store), iter, COLUMN_MEM, size_to_string(buf, (task->size)*1024), -1);
 
         /* rss */
-        gtk_tree_store_set(GTK_TREE_STORE(list_store), iter, COLUMN_RSS, size_to_string(buf, task->rss*1024), -1);
+        gtk_tree_store_set(GTK_TREE_STORE(list_store), iter, COLUMN_RSS, size_to_string(buf, (task->rss)*1024), -1);
 
         gtk_tree_store_set(GTK_TREE_STORE(list_store), iter, COLUMN_UNAME, task->uname, -1);
         sprintf(buf,"%0d%%", (guint)task->time_percentage);
@@ -436,7 +457,7 @@ void fill_list_item(gint i, GtkTreeIter *iter)
     }
 }
 
-void add_new_list_item(gint i)
+void add_new_list_item(guint i)
 {
         GtkTreeIter iter;
         gtk_tree_store_append(GTK_TREE_STORE(list_store), &iter, NULL);
@@ -444,7 +465,7 @@ void add_new_list_item(gint i)
         fill_list_item(i, &iter);
 }
 
-void refresh_list_item(gint i)
+void refresh_list_item(guint i)
 {
     GtkTreeIter iter;
     gboolean valid = gtk_tree_model_get_iter_first(GTK_TREE_MODEL(list_store), &iter);
@@ -454,7 +475,7 @@ void refresh_list_item(gint i)
         gchar *str_data = NULL;
         gtk_tree_model_get(GTK_TREE_MODEL(list_store), &iter, COLUMN_PID, &str_data, -1);
 
-        if(str_data && task->pid == atoi(str_data))
+        if(str_data && task->pid == atol(str_data))
         {
             g_free(str_data);
             fill_list_item(i, &iter);
@@ -466,7 +487,7 @@ void refresh_list_item(gint i)
     }
 }
 
-void remove_list_item(gint pid)
+void remove_list_item(pid_t pid)
 {
     GtkTreeIter iter;
     gboolean valid = gtk_tree_model_get_iter_first(GTK_TREE_MODEL(list_store), &iter);
@@ -476,7 +497,7 @@ void remove_list_item(gint pid)
         gchar *str_data = NULL;
         gtk_tree_model_get(GTK_TREE_MODEL(list_store), &iter, COLUMN_PID, &str_data, -1);
 
-        if(str_data && pid == atoi(str_data))
+        if(str_data && pid == atol(str_data))
         {
             g_free(str_data);
             gtk_tree_store_remove(GTK_TREE_STORE(list_store), &iter);
@@ -573,6 +594,25 @@ void change_task_view(void)
     refresh_task_list();
 }
 
+void change_full_path(void)
+{
+    guint i;
+    GArray *new_task_list;
+
+    /* gets the new task list */
+    new_task_list = (GArray*) get_task_list();
+
+    /* check if task is new and marks the task that its checked*/
+    for(i = 0; i < task_array->len; i++)
+    {
+        struct task *tmp = &g_array_index(task_array, struct task, i);
+        struct task *new_tmp = &g_array_index(new_task_list, struct task, i);
+	g_strlcpy(tmp->name, new_tmp->name, 255);
+        refresh_list_item(i);
+    }
+	
+    g_array_free(new_task_list, TRUE);    
+}
 
 void apply_prefs()
 {
