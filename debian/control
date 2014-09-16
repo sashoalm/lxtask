@@ -19,6 +19,9 @@ Depends: ${misc:Depends}, ${shlibs:Depends}
 Description: LXDE task manager
  LXTask is a GUI application for the Lightweight X11 Desktop Environment (LXDE).
  .
+ LXTask - lightweight and desktop-independent task manager derived from
+ xfce4-taskmanager with all dependencies on Xfce removed, new features,
+ and some improvement of the user interface. LXTask is based on GTK+ toolkit.
  It allows monitoring and controlling of running processes.
 
 Package: lxtask-dbg
