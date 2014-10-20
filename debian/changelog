@@ -1,3 +1,11 @@
+lxtask (0.1.6-1) unstable; urgency=low
+
+  * Merging upstream version 0.1.6.
+  * Bump Standards-Version to 3.9.6.
+  * Adding lintian-overrides file for debian-watch-may-check-gpg-signature.
+
+ -- Andriy Grytsenko <andrej@rep.kiev.ua>  Mon, 20 Oct 2014 20:58:17 +0300
+
 lxtask (0.1.5-1) unstable; urgency=low
 
   * Enabling parallel build (pass --parallel to dh).
