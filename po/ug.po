@@ -2,21 +2,21 @@
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
 # Gheyret Kenji <gheyret@gmail.com>, 2011.
-#
 msgid ""
 msgstr ""
 "Project-Id-Version: lxtask\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-11-13 23:42+0100\n"
-"PO-Revision-Date: 2012-09-28 09:37+0200\n"
-"Last-Translator: Gheyret <gheyret@gmail.com>\n"
+"POT-Creation-Date: 2014-09-26 01:30+0300\n"
+"PO-Revision-Date: 2014-12-05 14:08+0000\n"
+"Last-Translator: system user <>\n"
 "Language-Team: Uyghur Computer Science Association <UKIJ@yahoogroups.com>\n"
 "Language: ug\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Pootle 2.0.5\n"
+"X-Generator: Pootle 2.7\n"
+"X-POOTLE-MTIME: 1417788492.000000\n"
 
 #: ../lxtask.desktop.in.h:1 ../src/interface.c:55
 msgid "Task Manager"
@@ -29,6 +29,10 @@ msgstr "ئىجرا بولۇۋاتقان ئىجرالارنى باشقۇرۇش"
 #: ../lxtask.desktop.in.h:3
 msgid "Process manager"
 msgstr "ئىجرا باشقۇرغۇ"
+
+#: ../data/lxtask.desktop.in.h:4
+msgid "task;kill;suspend;processor;memory;monitoring;performance;"
+msgstr ""
 
 #: ../src/xfce-taskmanager-linux.c:285
 #, c-format
@@ -194,7 +198,8 @@ msgid ""
 "  * Johannes Zellner <webmaster@nebulon.de>"
 msgstr ""
 "LXTask بولسا Xfce4 ۋەزىپە باشقۇرغۇ(Xfce4 Task Manager) ئاساسىدا ياسالغان. "
-"ئاپتور:\\n\n"
+"ئاپتور:\\n"
+"\n"
 "* Johannes Zellner <webmaster@nebulon.de>"
 
 #. TRANSLATORS: Replace this string with your names, one name per line.

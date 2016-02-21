@@ -2,9 +2,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: LXDE\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-11-13 23:42+0100\n"
-"PO-Revision-Date: 2012-10-09 11:36+0200\n"
-"Last-Translator: Mișu <dumol@l10n.ro>\n"
+"POT-Creation-Date: 2014-09-26 01:30+0300\n"
+"PO-Revision-Date: 2015-08-17 01:30+0000\n"
+"Last-Translator: Anonymous Pootle User\n"
 "Language-Team: Romanian <LL@li.org>\n"
 "Language: ro\n"
 "MIME-Version: 1.0\n"
@@ -12,7 +12,8 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=(n==1 ? 0 : (n==0 || (n%100 > 0 && n%100 < "
 "20)) ? 1 : 2);;\n"
-"X-Generator: Pootle 2.0.5\n"
+"X-Generator: Pootle 2.7\n"
+"X-POOTLE-MTIME: 1439775045.382924\n"
 
 #: ../lxtask.desktop.in.h:1 ../src/interface.c:55
 msgid "Task Manager"
@@ -25,6 +26,10 @@ msgstr "Gestionați programele pornite"
 #: ../lxtask.desktop.in.h:3
 msgid "Process manager"
 msgstr "Manager de procese"
+
+#: ../data/lxtask.desktop.in.h:4
+msgid "task;kill;suspend;processor;memory;monitoring;performance;"
+msgstr ""
 
 #: ../src/xfce-taskmanager-linux.c:285
 #, c-format
