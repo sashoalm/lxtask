@@ -10,8 +10,8 @@ Build-Depends:
  debhelper (>= 9), autotools-dev, intltool, libglib2.0-dev, libgtk2.0-dev
 Standards-Version: 3.9.8
 Homepage: http://www.lxde.org/
-Vcs-Browser: http://git.lxde.org/gitweb/?p=debian/lxtask.git
-Vcs-Git: git://git.lxde.org/git/debian/lxtask.git
+Vcs-Browser: https://git.lxde.org/gitweb/?p=debian/lxtask.git
+Vcs-Git: https://git.lxde.org/git/debian/lxtask.git
 
 Package: lxtask
 Architecture: any
