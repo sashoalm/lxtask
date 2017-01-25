@@ -1,3 +1,11 @@
+lxtask (0.1.8-1) unstable; urgency=medium
+
+  * Merging upstream version 0.1.8.
+  * Bump Standards-Version to 3.9.8.
+  * Using https for VCS fields in debian/control file.
+
+ -- Andriy Grytsenko <andrej@rep.kiev.ua>  Wed, 25 Jan 2017 04:02:11 +0200
+
 lxtask (0.1.7-1) unstable; urgency=low
 
   * Merging upstream version 0.1.7.
