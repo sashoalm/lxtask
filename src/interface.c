@@ -38,6 +38,68 @@ extern gint refresh_interval;
 extern guint rID;
 GtkWidget *refresh_spin;
 
+gboolean
+exo_icon_view_search_equal_func (GtkTreeModel *model,
+                                 gint          column,
+                                 const gchar  *key,
+                                 GtkTreeIter  *iter,
+                                 gpointer      user_data)
+{
+  const gchar *str;
+  gboolean     retval = TRUE;
+  GValue       transformed = { 0, };
+  GValue       value = { 0, };
+  gchar       *case_normalized_string = NULL;
+  gchar       *case_normalized_key = NULL;
+  gchar       *normalized_string;
+  gchar       *normalized_key;
+
+  /* determine the value for the column/iter */
+  gtk_tree_model_get_value (model, iter, column, &value);
+
+  /* try to transform the value to a string */
+  g_value_init (&transformed, G_TYPE_STRING);
+  if (!g_value_transform (&value, &transformed))
+    {
+      g_value_unset (&value);
+      return TRUE;
+    }
+  g_value_unset (&value);
+
+  /* check if we have a string value */
+  str = g_value_get_string (&transformed);
+  if (G_UNLIKELY (str == NULL))
+    {
+      g_value_unset (&transformed);
+      return TRUE;
+    }
+
+  /* normalize the string and the key */
+  normalized_string = g_utf8_normalize (str, -1, G_NORMALIZE_ALL);
+  normalized_key = g_utf8_normalize (key, -1, G_NORMALIZE_ALL);
+
+  /* check if we have normalized both string */
+  if (G_LIKELY (normalized_string != NULL && normalized_key != NULL))
+    {
+      case_normalized_string = g_utf8_casefold (normalized_string, -1);
+      case_normalized_key = g_utf8_casefold (normalized_key, -1);
+
+      /* compare the casefolded strings */
+      if (strstr (case_normalized_string, case_normalized_key) != 0)
+        retval = FALSE;
+    }
+
+  /* cleanup */
+  g_free (case_normalized_string);
+  g_free (case_normalized_key);
+  g_value_unset (&transformed);
+  g_free (normalized_string);
+  g_free (normalized_key);
+
+  return retval;
+}
+
+
 GtkWidget* create_main_window (void)
 {
     GtkWidget *window;
@@ -145,6 +207,9 @@ GtkWidget* create_main_window (void)
     gtk_scrolled_window_set_shadow_type (GTK_SCROLLED_WINDOW (scrolledwindow1), GTK_SHADOW_IN);
 
     treeview = gtk_tree_view_new ();
+    
+    gtk_tree_view_set_search_equal_func(treeview, exo_icon_view_search_equal_func, 0, 0);
+    
     gtk_widget_show (treeview);
     gtk_container_add (GTK_CONTAINER (scrolledwindow1), treeview);
 
