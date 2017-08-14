@@ -44,8 +44,69 @@ gboolean on_treeview1_button_press_event(GtkButton *button, GdkEventButton *even
     return FALSE;
 }
 
-gboolean on_treeview_popup_menu(GtkWidget* treeview, gpointer user_data) {
-    gtk_menu_popup(GTK_MENU(taskpopup), NULL, NULL, NULL, NULL, 0, gdk_event_get_time(NULL));
+static void set_menu_position(GtkMenu *menu, gint *x, gint *y, gboolean *push_in, gpointer user_data)
+{
+    GtkWidget *widget = GTK_WIDGET(user_data);
+    GtkTreeModel *model;
+    GtkTreeIter iter;
+    if (gtk_tree_selection_get_selected(selection, &model, &iter))
+    {
+        GtkTreePath *path = gtk_tree_model_get_path(model, &iter);
+        GtkTreeView *treeview = GTK_TREE_VIEW(widget);
+        // scroll to selected line to make it visible in more cases
+        gtk_tree_view_scroll_to_cell(treeview, path, NULL, FALSE, 0, 0);
+        // get bin window coordinates of selected name column
+        GdkRectangle rect;
+        gtk_tree_view_get_cell_area(treeview, path, gtk_tree_view_get_column(treeview, COLUMN_NAME), &rect);
+        gtk_tree_path_free(path);
+        // convert bin window coordinates to widget relative coordinates
+        gint dx;
+        gint dy;
+        gtk_tree_view_convert_bin_window_to_widget_coords(treeview, rect.x, rect.y, &dx, &dy);
+        // get tree position
+        gint tree_x;
+        gint tree_y;
+        gdk_window_get_origin(widget->window, &tree_x, &tree_y);
+        // add relative coordinates of cell center to widget coordinates
+        gint menu_x = tree_x + dx + rect.width / 2;
+        gint menu_y = tree_y + dy + rect.height / 2;
+        // get tree size
+        GdkRectangle tree_rect;
+        gtk_tree_view_get_visible_rect(treeview, &tree_rect);
+        // get menu size
+        GtkRequisition menu_size;
+        gtk_widget_size_request(GTK_WIDGET(menu), &menu_size);
+        // force context menu not right of tree
+        if (menu_x + menu_size.width > tree_x + tree_rect.width) {
+            menu_x = tree_x + tree_rect.width - menu_size.width;
+        }
+        // force context menu not left of tree
+        if (menu_x < tree_x) {
+            menu_x = tree_x;
+        }
+        // force context menu not below bottom
+        gint screen_height = gdk_screen_get_height(gtk_widget_get_screen(GTK_WIDGET(menu)));
+        if (menu_y + menu_size.height > screen_height) {
+            // try move context menu up
+            menu_y -= menu_size.height;
+            if (menu_y + menu_size.height > screen_height) {
+                menu_y = screen_height - menu_size.height;
+            }
+        }
+        // force context menu not above top
+        if (menu_y < 0) {
+            menu_y = 0;
+        }
+        // return position of context menu
+        *x = menu_x;
+        *y = menu_y;
+        // move context menu fully into visible area horizontally
+        *push_in = TRUE;
+    }
+}
+
+gboolean on_treeview_popup_menu(GtkWidget *widget, gpointer user_data) {
+    gtk_menu_popup(GTK_MENU(taskpopup), NULL, NULL, (GtkMenuPositionFunc) set_menu_position, widget, 0, gdk_event_get_time(NULL));
     return TRUE;
 }
 
