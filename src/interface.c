@@ -34,6 +34,7 @@
   g_object_set_data (G_OBJECT (component), name, widget)
 
 void show_preferences(void);
+static void create_taskpopup(GtkAccelGroup* accel_group);
 extern gint refresh_interval;
 extern guint rID;
 GtkWidget *refresh_spin;
@@ -168,6 +169,8 @@ GtkWidget* create_main_window (void)
 
 	gtk_widget_show_all( menubar );
 
+    create_taskpopup(accel_group);
+
 	/* window content */
     vbox1 = gtk_vbox_new (FALSE, 10);
     gtk_widget_show (vbox1);
@@ -238,6 +241,7 @@ GtkWidget* create_main_window (void)
 
     g_signal_connect ((gpointer) window, "destroy", G_CALLBACK (on_quit), NULL);
     g_signal_connect_swapped ((gpointer) treeview, "button-press-event", G_CALLBACK(on_treeview1_button_press_event), NULL);
+    g_signal_connect(treeview, "popup-menu", G_CALLBACK(on_treeview_popup_menu), NULL);
     g_signal_connect(treeview, "focus-in-event", G_CALLBACK(on_focus_in_event), NULL);
     g_signal_connect ((gpointer) button1, "clicked",  G_CALLBACK (on_quit),  NULL);
     g_signal_connect ((gpointer) button3, "toggled",  G_CALLBACK (on_button3_toggled_event),  NULL);
@@ -314,9 +318,8 @@ void create_list_store(void)
     change_list_store_view();
 }
 
-GtkWidget* create_taskpopup (void)
+static void create_taskpopup(GtkAccelGroup* accel_group)
 {
-    GtkWidget *taskpopup;
     GtkWidget *menu_item;
 
     taskpopup = gtk_menu_new ();
@@ -332,11 +335,15 @@ GtkWidget* create_taskpopup (void)
     g_signal_connect ((gpointer) menu_item, "activate", G_CALLBACK (handle_task_menu), "CONT");
 
     menu_item = gtk_menu_item_new_with_mnemonic (_("Term"));
+    gtk_widget_add_accelerator(menu_item, "activate", accel_group,
+        GDK_KEY_Delete, (GdkModifierType)0, GTK_ACCEL_VISIBLE);
     gtk_widget_show (menu_item);
     gtk_container_add (GTK_CONTAINER (taskpopup), menu_item);
     g_signal_connect ((gpointer) menu_item, "activate", G_CALLBACK (handle_task_menu), "TERM");
 
     menu_item = gtk_menu_item_new_with_mnemonic (_("Kill"));
+    gtk_widget_add_accelerator(menu_item, "activate", accel_group,
+        GDK_KEY_Delete, (GdkModifierType) GDK_SHIFT_MASK, GTK_ACCEL_VISIBLE);
     gtk_widget_show (menu_item);
     gtk_container_add (GTK_CONTAINER (taskpopup), menu_item);
     g_signal_connect ((gpointer) menu_item, "activate", G_CALLBACK (handle_task_menu), "KILL");
@@ -345,8 +352,6 @@ GtkWidget* create_taskpopup (void)
     gtk_menu_item_set_submenu((gpointer) menu_item, create_prio_submenu());
     gtk_widget_show (menu_item);
     gtk_container_add (GTK_CONTAINER (taskpopup), menu_item);
-
-    return taskpopup;
 }
 
 GtkWidget *create_prio_submenu(void)

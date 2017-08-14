@@ -39,14 +39,17 @@ gboolean on_treeview1_button_press_event(GtkButton *button, GdkEventButton *even
     if(event->button == 3)
     {
         GdkEventButton *mouseevent = (GdkEventButton *)event;
-        if(taskpopup == NULL)
-            taskpopup = create_taskpopup ();
         gtk_menu_popup(GTK_MENU(taskpopup), NULL, NULL, NULL, NULL, mouseevent->button, mouseevent->time);
     }
     return FALSE;
 }
 
-void on_focus_in_event(GtkWidget *widget, GdkEvent *event, gpointer user_data)
+gboolean on_treeview_popup_menu(GtkWidget* treeview, gpointer user_data) {
+    gtk_menu_popup(GTK_MENU(taskpopup), NULL, NULL, NULL, NULL, 0, gdk_event_get_time(NULL));
+    return TRUE;
+}
+
+void on_focus_in_event(GtkWidget * widget, GdkEvent *event, gpointer user_data)
 {
     GtkTreeModel *model;
     GtkTreeIter iter;
