@@ -216,6 +216,8 @@ GtkWidget* create_main_window (void)
     create_list_store();
 
     selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(treeview));
+    // exactly one row is always selected
+    gtk_tree_selection_set_mode(selection, GTK_SELECTION_BROWSE);
 
     gtk_tree_view_set_model(GTK_TREE_VIEW(treeview), GTK_TREE_MODEL(list_store));
 
@@ -236,6 +238,7 @@ GtkWidget* create_main_window (void)
 
     g_signal_connect ((gpointer) window, "destroy", G_CALLBACK (on_quit), NULL);
     g_signal_connect_swapped ((gpointer) treeview, "button-press-event", G_CALLBACK(on_treeview1_button_press_event), NULL);
+    g_signal_connect(treeview, "focus-in-event", G_CALLBACK(on_focus_in_event), NULL);
     g_signal_connect ((gpointer) button1, "clicked",  G_CALLBACK (on_quit),  NULL);
     g_signal_connect ((gpointer) button3, "toggled",  G_CALLBACK (on_button3_toggled_event),  NULL);
 

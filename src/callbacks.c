@@ -46,6 +46,26 @@ gboolean on_treeview1_button_press_event(GtkButton *button, GdkEventButton *even
     return FALSE;
 }
 
+void on_focus_in_event(GtkWidget *widget, GdkEvent *event, gpointer user_data)
+{
+    GtkTreeModel *model;
+    GtkTreeIter iter;
+    if (!gtk_tree_selection_get_selected(selection, &model, &iter))
+    {
+        GtkTreePath *path;
+        GtkTreeViewColumn *focus_column;
+        gtk_tree_view_get_cursor(GTK_TREE_VIEW(widget), &path, &focus_column);
+        if (NULL != path) {
+            gtk_tree_selection_select_path(selection, path);
+            gtk_tree_path_free(path);
+        } else {
+            GtkTreeIter iter;
+            gtk_tree_model_get_iter_first(GTK_TREE_MODEL(list_store), &iter);
+            gtk_tree_selection_select_iter(selection, &iter);
+        }
+    }
+}
+
 void handle_task_menu(GtkWidget *widget, gchar *signal)
 {
     if(signal != NULL)
