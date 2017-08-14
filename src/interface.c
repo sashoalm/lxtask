@@ -208,7 +208,7 @@ GtkWidget* create_main_window (void)
 
     treeview = gtk_tree_view_new ();
     
-    gtk_tree_view_set_search_equal_func(treeview, exo_icon_view_search_equal_func, 0, 0);
+    gtk_tree_view_set_search_equal_func(GTK_TREE_VIEW(treeview), exo_icon_view_search_equal_func, 0, 0);
     
     gtk_widget_show (treeview);
     gtk_container_add (GTK_CONTAINER (scrolledwindow1), treeview);
