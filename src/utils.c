@@ -45,7 +45,7 @@ void show_error( const char* format, ... )
     gtk_widget_destroy( dlg );
 }
 
-gboolean confirm( const char* question )
+gboolean confirm( const char* question, gboolean isYesDefault )
 {
     GtkWidget* dlg;
     int ret;
@@ -54,6 +54,8 @@ gboolean confirm( const char* question )
                                               GTK_BUTTONS_YES_NO,
                                               "%s", question );
     gtk_window_set_title( (GtkWindow*)dlg, _("Confirm") );
+    if(isYesDefault)
+        gtk_dialog_set_default_response((GtkDialog*) dlg, GTK_RESPONSE_YES);
     ret = gtk_dialog_run( (GtkDialog*)dlg );
     gtk_widget_destroy( dlg );
 

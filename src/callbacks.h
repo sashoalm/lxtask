@@ -36,6 +36,8 @@
 void on_button1_button_press_event(GtkButton *button, GdkEventButton *event);
 void on_button3_toggled_event(GtkButton *button, GdkEventButton *event);
 gboolean on_treeview1_button_press_event(GtkButton *button, GdkEventButton *event);
+gboolean on_treeview_popup_menu(GtkWidget* treeview, gpointer user_data);
+void on_focus_in_event(GtkWidget *widget, GdkEvent *event, gpointer user_data);
 void handle_task_menu(GtkWidget *widget, gchar *signal);
 void handle_prio_menu(GtkWidget *widget, gchar *prio);
 void on_show_tasks_toggled (GtkMenuItem *menuitem, gpointer uid);
